@@ -9,7 +9,7 @@ exports.up = function(knex) {
       table.string("name", 255).notNullable();
       table.integer("age").notNullable().unsigned();
       table.string("gender", 63).notNullable();
-      table.string("birthpace", 127).nullable();
+      table.string("birthplace", 127).nullable();
       table.string("residence", 127).nullable();
       table.string("special_people", 255).nullable();
       table.string("favoured_possession", 255).nullable();
