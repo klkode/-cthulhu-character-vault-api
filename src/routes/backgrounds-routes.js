@@ -1,9 +1,8 @@
 const router = require("express").Router();
+const backgroundsController = require("../controllers/backgrounds-controller.js");
 
 //Route for /backgrounds
-// GETs the backgrunds list from the backgrounds table
-router.route("/").get((req, res) => {
-    res.send('placeholder until backgrounds retrieved');
-});
+// GETs the backgrounds list from the backgrounds table
+router.route("/").get(backgroundsController.getAllBackgrounds);
 
 module.exports = router;
