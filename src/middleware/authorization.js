@@ -13,7 +13,7 @@ function authorize(req, res, next) {
     try {
         const payload = jwt.verify(token, JWT_KEY);
         req.decode = payload;
-        //   console.log(req.decode);
+        console.log(req.decode);
         next();
 
     } catch (error) {
