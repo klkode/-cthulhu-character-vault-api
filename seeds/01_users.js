@@ -9,12 +9,12 @@ exports.seed = async function (knex) {
         {
             user_id: 1,
             username: "tester",
-            password: "password123"
+            password: "$2b$10$mjmMyl0Xo/mJhpUi6x5w7uzUKYizHjjBFY/uE3TVPAW0HnmmXJKnW"
         },
         {
             user_id: 2,
             username: "player",
-            password: "password1234"
+            password: "$2b$10$2HWjKyMdLRfaqbbVo.NQ6uxoFTyN9vVV/tGbuE25r04nCIUzeQ79G"
         }
     ]);
 };
