@@ -6,7 +6,6 @@ const charactersController = require("../controllers/characters-controller.js");
 // GETs the characters list from the characters table
 router
     .route("/")
-    .get(charactersController.getAllUsersCharacters);
-    // .get(authorize, charactersController.getAllUsersCharacters);
+    .get(authorize, charactersController.getAllUsersCharacters);
 
 module.exports = router;
