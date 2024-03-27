@@ -34,6 +34,7 @@ const getCharacterDetails = async (req, res) => {
 
         //Get a list of the characters belonging to this user. Only return the information on the character's name, id, and their background's name 
         const characterData = await knex('characters')
+        .join("backgrounds", "backgrounds.background_id", "characters.background_id")
         .select(
             "characters.character_id",
             "characters.name AS character_name",
@@ -42,6 +43,7 @@ const getCharacterDetails = async (req, res) => {
             "characters.birthplace",
             "characters.residence",
             "characters.background_id",
+            "backgrounds.name AS background_name",
             "characters.special_people",
             "characters.favoured_possession",
             "characters.mania",
