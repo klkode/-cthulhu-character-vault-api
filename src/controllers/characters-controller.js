@@ -109,6 +109,7 @@ const addCharacter = async (req, res) => {
             user_id: userId,
             username: userName 
         });
+
         if (referencedUser.length === 0) {
             return res.status(400).json({
               error: `Inventories request cannot be completed as the user ${userName} does not exist.`,
@@ -123,12 +124,13 @@ const addCharacter = async (req, res) => {
                 const skillsList = req.body.skills;
                 const characterStats = req.body.stats;
 
-                // Create character object, removing unecessary values
+                // Create character object, adding user_id and removing unecessary values
                 const characterInputs = req.body;
+                characterInputs.user_id = userId;
                 delete characterInputs.equipment;
                 delete characterInputs.skills;
                 delete characterInputs.stats;
-
+                
                 // Add the new character to the database
                 const newCharacterIds = await knex("characters").insert(characterInputs).transacting(trx);
                 const newCharacterId = newCharacterIds[0];
@@ -137,11 +139,14 @@ const addCharacter = async (req, res) => {
                 characterStats.character_id = newCharacterId;
                 skillsList.forEach((skill) => skill.character_id = newCharacterId);
                 equipmentList.forEach((equipment) => equipment.character_id = newCharacterId);
-
+                
                 // Insert the relational table data
                 const newCharacterStats = await knex("stats").insert(characterStats).transacting(trx);
                 const newCharacterSkills = await knex("skill_points").insert(skillsList).transacting(trx);
-                const newCharacterEquipment = await knex("equipment").insert(equipmentList).transacting(trx);
+                let newCharacterEquipment;
+                if(equipmentList.length !== 0){
+                    newCharacterEquipment = await knex("equipment").insert(equipmentList).transacting(trx);
+                }
 
                 // Compress all the new inserts into one object to return to the user
                 const newCharacterData = await knex('characters')
@@ -174,7 +179,7 @@ const addCharacter = async (req, res) => {
                 .where({character_id: newCharacterId})
                 .first()
                 .transacting(trx);
-    
+
                 // Remove the unnecessary keys from the object
                 delete statsData.character_id;
                 delete statsData.created_at;
@@ -188,7 +193,7 @@ const addCharacter = async (req, res) => {
                 )          
                 .where({character_id: newCharacterId})
                 .transacting(trx);
-    
+
                 // Get an array of all the character's equipment
                 const equipmentData = await knex('equipment')
                 .select(
@@ -197,13 +202,13 @@ const addCharacter = async (req, res) => {
                 )          
                 .where({character_id: newCharacterId})
                 .transacting(trx);
-                
+
                 // Add them onto the characterData object
                 const createdCharacter = {...newCharacterData, stats: statsData, skills: skillsData,  equipment: equipmentData};
 
                 // Return the created character
                 res.status(201).json(createdCharacter);
-                
+
             });
         }
 
