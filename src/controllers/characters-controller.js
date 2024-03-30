@@ -217,4 +217,36 @@ const addCharacter = async (req, res) => {
     }
 }
 
-module.exports = { getAllUsersCharacters, getCharacterDetails, addCharacter };
+const deleteCharacter = async (req, res) => {
+    try {
+        // Check if user_id+username exists in database
+        const userId = req.decode.user_id;
+        const userName = req.decode.username;
+        const referencedUser = await knex("users").where({
+            user_id: userId,
+            username: userName 
+        });
+        if (referencedUser.length === 0) {
+            return res.status(400).json({
+            error: `Request cannot be completed as the user ${userName} does not exist.`,
+            });
+
+        }else {
+            const rowsDeleted = await knex("characters")
+            .where({ character_id: req.params.id, user_id: userId })
+            .delete();
+
+            if (rowsDeleted === 0) {
+                // Nothing was deleted as the character wasn't found associated with that user
+                res.status(404).json({ error: `Character ${req.params.id} not found under user ${userName} to delete.` });
+            }else{
+                // No Content response for success
+                res.sendStatus(204);
+            }
+        }
+    }catch(error) {
+        res.status(500).send(`Error deleting character: ${error}`);
+    }
+}
+
+module.exports = { getAllUsersCharacters, getCharacterDetails, addCharacter, deleteCharacter };

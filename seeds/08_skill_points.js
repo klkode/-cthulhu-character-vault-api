@@ -149,7 +149,7 @@ exports.seed = async function (knex) {
         {
             character_id: 1,
             skill_id: 29,
-            points: 1
+            points: 0
         },
         {
             character_id: 1,
@@ -799,7 +799,7 @@ exports.seed = async function (knex) {
         {
             character_id: 2,
             skill_id: 29,
-            points: 1
+            points: 0
         },
         {
             character_id: 2,
@@ -1449,7 +1449,7 @@ exports.seed = async function (knex) {
         {
             character_id: 3,
             skill_id: 29,
-            points: 1
+            points: 0
         },
         {
             character_id: 3,
@@ -2099,7 +2099,7 @@ exports.seed = async function (knex) {
         {
             character_id: 4,
             skill_id: 29,
-            points: 1
+            points: 0
         },
         {
             character_id: 4,
@@ -2749,7 +2749,7 @@ exports.seed = async function (knex) {
         {
             character_id: 5,
             skill_id: 29,
-            points: 1
+            points: 0
         },
         {
             character_id: 5,
@@ -3399,7 +3399,7 @@ exports.seed = async function (knex) {
         {
             character_id: 6,
             skill_id: 29,
-            points: 1
+            points: 0
         },
         {
             character_id: 6,
@@ -4049,7 +4049,7 @@ exports.seed = async function (knex) {
         {
             character_id: 7,
             skill_id: 29,
-            points: 1
+            points: 0
         },
         {
             character_id: 7,
@@ -4699,7 +4699,7 @@ exports.seed = async function (knex) {
         {
             character_id: 8,
             skill_id: 29,
-            points: 1
+            points: 0
         },
         {
             character_id: 8,

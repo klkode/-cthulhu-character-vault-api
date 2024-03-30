@@ -14,6 +14,7 @@ router
 // GETs the details for a specified character that matched the id from characters table
 router
     .route("/:id")
-    .get(authorize, charactersController.getCharacterDetails);
+    .get(authorize, charactersController.getCharacterDetails)
+    .delete(authorize, charactersController.deleteCharacter);
 
 module.exports = router;
