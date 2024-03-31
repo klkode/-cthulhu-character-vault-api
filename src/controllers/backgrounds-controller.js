@@ -1,5 +1,12 @@
 const knex = require("knex")(require("../../knexfile.js"));
 
+/**
+ * getAllBackgrounds is a function that will fufill a GET request and get all background information, including the occupation skill options, and return it in an array in the response.
+ * 
+ * @param {Object}      req 
+ * @param {Object}      res 
+ * 
+ */
 const getAllBackgrounds = async (req, res) => {
     try {
         const backgroundData = await knex('backgrounds')

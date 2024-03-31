@@ -3,6 +3,13 @@ const jwt = require("jsonwebtoken");
 
 const { JWT_KEY } = process.env;
 
+/**
+ * authorize is a middleware function to check that the token is authenticated or else the request should not be processed because the user isn't validated.
+ * 
+ * @param {Object}      req 
+ * @param {Object}      res 
+ * @param {Object}      next
+ */
 function authorize(req, res, next) {
     // Get the authorization token from the header
     const { authorization } = req.headers;
@@ -15,7 +22,6 @@ function authorize(req, res, next) {
         next();
 
     } catch (error) {
-        // console.log(error);
         res.status(401).json({ error: "User not validated." })
 
     }

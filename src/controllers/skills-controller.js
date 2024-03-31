@@ -1,5 +1,11 @@
 const knex = require("knex")(require("../../knexfile.js"));
 
+/**
+ * getAllSkills is a function that will fulfill a GET request by getting all the skills in the skills table and returning an array of them.
+ * 
+ * @param {Object}      req 
+ * @param {Object}      res
+ */
 const getAllSkills = async (req, res) => {
     try {
         const data = await knex('skills').select(

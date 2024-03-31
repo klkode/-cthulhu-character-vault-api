@@ -4,10 +4,15 @@ const jwt = require("jsonwebtoken");
 const knex = require("knex")(require("../../knexfile.js"));
 
 const { JWT_KEY } = process.env;
-// const { SALT_ROUNDS } = process.env;
 const SALT_ROUNDS = 10;
 
-
+/**
+ * userSignUp is a function that fufills a POST request. A new user will be created, with the provided username and password, and then return a token to use as for server request validation for the new user's session.
+ * 
+ * @param {Object}      req 
+ * @param {Object}      res 
+ * 
+ */
 const userSignUp = async (req, res) => {
     try {
         // Get the username and password from the request
@@ -42,7 +47,13 @@ const userSignUp = async (req, res) => {
     }
 };
 
-
+/**
+ * userLogin is a function that fufills a POST request. If the username and password match one in the users table, return a token to use as for server request validation for the user's session.
+ * 
+ * @param {Object}      req 
+ * @param {Object}      res
+ * 
+ */
 const userLogin = async (req, res) => {
     // Get the username and password from the request
     const { username, password } = req.body;
