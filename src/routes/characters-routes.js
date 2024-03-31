@@ -1,6 +1,6 @@
 const router = require("express").Router();
 const { authorize } = require("../middleware/authorization.js");
-const { validateNewCharacter } = require("../middleware/validation.js");
+const { validateNewCharacter, validateEditCharacter } = require("../middleware/validation.js");
 const charactersController = require("../controllers/characters-controller.js");
 
 //Route for /characters
@@ -15,6 +15,7 @@ router
 router
     .route("/:id")
     .get(authorize, charactersController.getCharacterDetails)
+    .put(authorize, validateEditCharacter, charactersController.editCharacter)
     .delete(authorize, charactersController.deleteCharacter);
 
 module.exports = router;

@@ -112,7 +112,7 @@ const addCharacter = async (req, res) => {
 
         if (referencedUser.length === 0) {
             return res.status(400).json({
-              error: `Inventories request cannot be completed as the user ${userName} does not exist.`,
+              error: `Request cannot be completed as the user ${userName} does not exist.`,
             });
 
         } else {
@@ -217,6 +217,152 @@ const addCharacter = async (req, res) => {
     }
 }
 
+const editCharacter = async (req, res) => {
+    try{
+        // Check if user_id+username exists in database
+        const userId = req.decode.user_id;
+        const userName = req.decode.username;
+        const referencedUser = await knex("users").where({
+            user_id: userId,
+            username: userName 
+        });
+        if (referencedUser.length === 0) {
+            return res.status(400).json({
+            error: `Request cannot be completed as the user ${userName} does not exist.`,
+            });
+
+        }else {
+            const characterId = req.params.id;
+            if (!characterId || isNaN(characterId)) {
+                // Return the response of an invalid ID
+                 return res.status(400).send(`Invalid character id: ${characterId}`);
+            }
+            const existingCharacter = await knex('characters')
+            .where({character_id: characterId, user_id: userId})
+            .first();
+
+            if(existingCharacter.length === 0){
+                return res.status(404).json({
+                    error: `Request cannot be completed as the ${userName} does not have a character with id ${characterId}.`,
+                });
+
+            }else{
+                // Edit the validated body of the character
+                // Create a transaction as there will be several database insertions
+                await knex.transaction(async(trx) => {
+                    // Iscolate the three foreign key dependent data sets to add
+                    const equipmentList = req.body.equipment;
+                    const skillsList = req.body.skills;
+                    const characterStats = req.body.stats;
+
+                    // Create character object, adding user_id and removing unecessary values
+                    const characterInputs = req.body;
+                    characterInputs.user_id = userId;
+                    delete characterInputs.equipment;
+                    delete characterInputs.skills;
+                    delete characterInputs.stats;
+                    
+                    // Update the character in the database
+                    const editCharacterIds = await knex("characters")
+                    .where({character_id: characterId, user_id: userId})
+                    .update(characterInputs)
+                    .transacting(trx);
+
+                    //Add this id to all the foriegn key dependent tables data sets
+                    characterStats.character_id = characterId;
+                    skillsList.forEach((skill) => skill.character_id = characterId);
+                    equipmentList.forEach((equipment) => equipment.character_id = characterId);
+                    // Update the relational table data
+                    const editCharacterStats = await knex("stats")
+                    .where({character_id: characterId})
+                    .update(characterStats)
+                    .transacting(trx);
+                    for(let index = 0; index < skillsList.length; index++){
+                        const editCharacterSkills = await knex("skill_points")
+                        .where({character_id: characterId, skill_id: skillsList[index].skill_id })
+                        .update(skillsList[index])
+                        .transacting(trx);
+                    }
+                    let editCharacterEquipment;
+                    if(equipmentList.length !== 0){
+                        for(let index = 0; index < equipmentList.length; index++){
+                            // TODO delete equipment no longer in list
+                            editCharacterEquipment = await knex("equipment")
+                            .where({character_id: characterId, equipment_id: equipmentList[index].equipment_id})
+                            .update(equipmentList[index])
+                            .transacting(trx);
+                            }
+                    }
+
+                    // Compress all the new inserts into one object to return to the user
+                    const editCharacterData = await knex('characters')
+                    .join("backgrounds", "backgrounds.background_id", "characters.background_id")
+                    .select(
+                        "characters.character_id",
+                        "characters.name AS character_name",
+                        "characters.gender",
+                        "characters.age",
+                        "characters.birthplace",
+                        "characters.residence",
+                        "characters.background_id",
+                        "backgrounds.name AS background_name",
+                        "characters.special_people",
+                        "characters.favoured_possession",
+                        "characters.mania",
+                        "characters.traits",
+                        "characters.injuries",
+                        "characters.feats",
+                        "characters.spells",
+                        "characters.notes"            
+                    )
+                    .where({'characters.character_id': characterId})
+                    .first()
+                    .transacting(trx);
+
+                    // Get the character's stats as an object
+                    const statsData = await knex('stats')
+                    .select("*")          
+                    .where({character_id: characterId})
+                    .first()
+                    .transacting(trx);
+
+                    // Remove the unnecessary keys from the object
+                    delete statsData.character_id;
+                    delete statsData.created_at;
+                    delete statsData.updated_at;
+
+                    // Get an array of all the character's skill points
+                    const skillsData = await knex('skill_points')
+                    .select(
+                        "skill_points.skill_id",
+                        "skill_points.points",
+                    )          
+                    .where({character_id: characterId})
+                    .transacting(trx);
+
+                    // Get an array of all the character's equipment
+                    const equipmentData = await knex('equipment')
+                    .select(
+                        "equipment.equipment_id",
+                        "equipment.name",
+                    )          
+                    .where({character_id: characterId})
+                    .transacting(trx);
+
+                    // Add them onto the characterData object
+                    const editedCharacter = {...editCharacterData, stats: statsData, skills: skillsData,  equipment: equipmentData};
+
+                    // Return the edited character
+                    res.status(200).json(editedCharacter);
+
+                });
+            }
+        }
+    }catch(error){
+        res.status(500).send(`Error editing character: ${error}`);
+    }
+}
+
 const deleteCharacter = async (req, res) => {
     try {
         // Check if user_id+username exists in database
@@ -249,4 +395,4 @@ const deleteCharacter = async (req, res) => {
     }
 }
 
-module.exports = { getAllUsersCharacters, getCharacterDetails, addCharacter, deleteCharacter };
+module.exports = { getAllUsersCharacters, getCharacterDetails, addCharacter, editCharacter, deleteCharacter };
