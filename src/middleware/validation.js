@@ -2,7 +2,7 @@
 const NUM_SKILLS = 130;
 
 /**
- * validateNewCharacter is a middlewarefunction that will check the body data in a POST /characters request to ensure that it can be properly added to the characters table and other relational tables.
+ * validateNewCharacter is a middleware function that will check the body data in a POST /characters request to ensure that it can be properly added to the characters table and other relational tables.
  * 
  * @param {Object}      req 
  * @param {Object}      res 
@@ -59,7 +59,14 @@ function validateNewCharacter(req, res, next) {
 
 }
 
-
+/**
+ * validateEditCharacter is a middleware function that will check the body data in a PUT /characters/:id request to ensure that it can be properly used to update a character in the characters table and other relational tables.
+ * 
+ * @param {Object}      req 
+ * @param {Object}      res 
+ * @param {Object}      next 
+ * 
+ */
 function validateEditCharacter(req, res, next) {
     const characterData = req.body;
 
@@ -124,6 +131,13 @@ function validateEditCharacter(req, res, next) {
 
 }
 
+/**
+ * allRequiredCharacterDetailsPresent is a helper function that checks if all the required fields of a character's data in the characters table are present when creating a character
+ * 
+ * @param {Object}      characterData 
+ * 
+ * @returns {boolean}
+ */
 function allRequiredCharacterDetailsPresent(characterData){
     if(!characterData.name || !characterData.gender || !(characterData.age) || !(characterData.background_id)){
         return false;
@@ -132,6 +146,13 @@ function allRequiredCharacterDetailsPresent(characterData){
     }
 }
 
+/**
+ * allRequiredExistingDetailsPresent is a helper function that checks if all the required fields of a character's data in the characters table are present when updating a character
+ * 
+ * @param {Object}      characterData 
+ * 
+ * @returns {boolean}
+ */
 function allRequiredExistingDetailsPresent(characterData){
     if(!characterData.name || !characterData.gender || !(characterData.age) 
     || !(characterData.background_id) || !(characterData.character_id)){
@@ -141,6 +162,13 @@ function allRequiredExistingDetailsPresent(characterData){
     }
 }
 
+/**
+ * allCharacterStatsPresent is a helper function that checks if all the required fields of a character's stat data in the stats table are present
+ * 
+ * @param {Object}      characterStats 
+ * 
+ * @returns {boolean}
+ */
 function allCharacterStatsPresent(characterStats){
     if(!(characterStats.strength+"") || !(characterStats.dexterity+"") || !(characterStats.constitution+"")
     || !(characterStats.size+"") || !(characterStats.appearance+"") || !(characterStats.education+"")
@@ -153,6 +181,13 @@ function allCharacterStatsPresent(characterStats){
     }
 }
 
+/**
+ * allCharacterSkillsPresent is a helper function that checks if all the skills in the skills table are represented in the character's skills array
+ * 
+ * @param {Object[]}      characterSkills 
+ * 
+ * @returns {boolean}
+ */
 function allCharacterSkillsPresent(characterSkills){
     if(characterSkills.length !== NUM_SKILLS){
         return false;
@@ -178,6 +213,13 @@ function allCharacterSkillsPresent(characterSkills){
     return true;
 }
 
+/**
+ * areAllStatsNumbers is a helper function that checks if all the fields of a character's stat data are numbers
+ * 
+ * @param {Object}      characterStats 
+ * 
+ * @returns {boolean}
+ */
 function areAllStatsNumbers(characterStats){
     if(isNaN(characterStats.strength) || isNaN(characterStats.dexterity) || isNaN(characterStats.constitution)
     || isNaN(characterStats.size) || isNaN(characterStats.appearance) || isNaN(characterStats.education)
@@ -190,6 +232,13 @@ function areAllStatsNumbers(characterStats){
     }
 }
 
+/**
+ * areAllSkillsNumbers is a helper function that checks if all the fields of a character's skill data are numbers
+ * 
+ * @param {Object[]}      characterSkills 
+ * 
+ * @returns {boolean}
+ */
 function areAllSkillsNumbers(characterSkills){
     for(let i = 0; i < characterSkills.length; i++){
         if(isNaN(characterSkills[i].skill_id) || isNaN(characterSkills[i].points)){
@@ -199,6 +248,13 @@ function areAllSkillsNumbers(characterSkills){
     return true;
 }
 
+/**
+ * areAllStatsUnsigned is a helper function that checks if all the fields of a character's stat data are unsigned integers
+ * 
+ * @param {Object}      characterStats 
+ * 
+ * @returns {boolean}
+ */
 function areAllStatsUnsigned(characterStats){
     if(!intBetween0To100(characterStats.strength) || !intBetween0To100(characterStats.dexterity) 
     || !intBetween0To100(characterStats.constitution) || !intBetween0To100(characterStats.size) 
@@ -213,6 +269,13 @@ function areAllStatsUnsigned(characterStats){
     }
 }
 
+/**
+ * areAllSkillsUnsigned is a helper function that checks if all the fields of a character's skill data are unsigned integers
+ * 
+ * @param {Object[]}      characterSkills 
+ * 
+ * @returns {boolean}
+ */
 function areAllSkillsUnsigned(characterSkills){
     for(let i = 0; i < characterSkills.length; i++){
         if(!(characterSkills[i].skill_id >=1 && Number.isInteger(characterSkills[i].skill_id) ) 
@@ -223,10 +286,24 @@ function areAllSkillsUnsigned(characterSkills){
     return true;
 }
 
+/**
+ * intBetween0To100 is a helper function that checks if a number is an integer between 0 and 100 (inclusive)
+ * 
+ * @param {number}      num 
+ * 
+ * @returns {boolean}
+ */
 function intBetween0To100(num){
     return ((num >= 0) && (num <= 100) && Number.isInteger(num));
 }
 
+/**
+ * lengthUnderMaximum is a helper function that checks if a string's length is less than a given maximum number.
+ * @param {string}      str 
+ * @param {number}      max 
+ * 
+ * @returns {boolean}
+ */
 function lengthUnderMaximum(str, max){
     return (str.length <= max); 
 }
