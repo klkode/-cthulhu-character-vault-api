@@ -78,8 +78,8 @@ const userLogin = async (req, res) => {
         // Check that the user exists in the database
         const user = await knex("users").where({ username: username }).first();
         if (!user) {
-        // Return the response of failing to find the user data
-        return res.status(404).json({ error: `User ${username} does not exist.` });
+            // Return the response of failing to find the user data
+            return res.status(404).json({ error: `User ${username} does not exist.` });
         }
 
         // Check if password is correct
@@ -88,7 +88,7 @@ const userLogin = async (req, res) => {
         if(!passwordMatches){
             // If there's an error, send that back to the client with a 401 status code.
             return res.status(401).json({ error: "Login failed. Wrong username and password" });
-            
+
         }else{
             // Create a JWT token for the user(with user_id and username) and send the token back to the client.
             let token = jwt.sign({ user_id: user.user_id, username: user.username }, JWT_KEY);

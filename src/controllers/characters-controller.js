@@ -272,12 +272,8 @@ const editCharacter = async (req, res) => {
             });
 
         }else {
-            // Check that the id is a valid id
+            // Get the character id
             const characterId = req.params.id;
-            if (!characterId || isNaN(characterId)) {
-                // Return the response of an invalid ID
-                 return res.status(400).send(`Invalid character id: ${characterId}`);
-            }
 
             //Check that a character with this id exists for this user 
             const existingCharacter = await knex('characters')
