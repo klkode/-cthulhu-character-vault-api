@@ -24,7 +24,7 @@ const getAllUsersCharacters = async (req, res) => {
         // Return the results of the query
         res.status(200).json(data);
     } catch (error) {
-        res.status(500).send(`Error retrieving users characters: ${error}`);
+        res.status(500).json({ error: `Error retrieving users characters: ${error}` });
     }
 }
 
@@ -47,15 +47,14 @@ const getCharacterDetails = async (req, res) => {
 
         if (referencedUser.length === 0) {
             return res.status(400).json({
-              error: `Request cannot be completed as the user ${userName} does not exist.`,
-            });
+              error: `Request cannot be completed as the user ${userName} does not exist.`});
 
         } else {
             // Check to see if the ID of the character is valid
             const characterId = req.params.id;
             if (!characterId || isNaN(characterId)) {
                 // Return the response of an invalid ID
-                return res.status(400).send(`Invalid character id: ${characterId}`);
+                return res.status(400).json({ error: `Invalid character id: ${characterId}` });
             }
 
             //Get a list of the characters belonging to this user. Only return the information on the character's name, id, and their background's name 
@@ -122,7 +121,8 @@ const getCharacterDetails = async (req, res) => {
         }
 
     }catch(error){
-        res.status(500).send(`Error retrieving character's details: ${error}`);
+        res.status(500).json({ error: `Error retrieving character's details: ${error}` });
+        
     }
 }
 
@@ -145,8 +145,7 @@ const addCharacter = async (req, res) => {
 
         if (referencedUser.length === 0) {
             return res.status(400).json({
-              error: `Request cannot be completed as the user ${userName} does not exist.`,
-            });
+              error: `Request cannot be completed as the user ${userName} does not exist.`});
 
         } else {
             // Add the validated body into the characters database
@@ -246,7 +245,7 @@ const addCharacter = async (req, res) => {
         }
 
     }catch(error){
-        res.status(500).send(`Error adding new character: ${error}`);
+        res.status(500).json({ error: `Error adding new character: ${error}` });
     }
 }
 
@@ -268,8 +267,7 @@ const editCharacter = async (req, res) => {
         });
         if (referencedUser.length === 0) {
             return res.status(400).json({
-            error: `Request cannot be completed as the user ${userName} does not exist.`,
-            });
+            error: `Request cannot be completed as the user ${userName} does not exist.`});
 
         }else {
             // Get the character id
@@ -282,8 +280,7 @@ const editCharacter = async (req, res) => {
 
             if(existingCharacter.length === 0){
                 return res.status(404).json({
-                    error: `Request cannot be completed as the ${userName} does not have a character with id ${characterId}.`,
-                });
+                    error: `Request cannot be completed as the ${userName} does not have a character with id ${characterId}`});
 
             }else{
                 // Edit the validated body of the character
@@ -398,7 +395,7 @@ const editCharacter = async (req, res) => {
             }
         }
     }catch(error){
-        res.status(500).send(`Error editing character: ${error}`);
+        res.status(500).json({ error: `Error editing character: ${error}` });
     }
 }
 
@@ -420,15 +417,14 @@ const deleteCharacter = async (req, res) => {
         });
         if (referencedUser.length === 0) {
             return res.status(400).json({
-            error: `Request cannot be completed as the user ${userName} does not exist.`,
-            });
+            error: `Request cannot be completed as the user ${userName} does not exist.`});
 
         }else {
             // Check that the id is a valid id
             const characterId = req.params.id;
             if (!characterId || isNaN(characterId)) {
                 // Return the response of an invalid ID
-                 return res.status(400).send(`Invalid character id: ${characterId}`);
+                 return res.status(400).json({ error: `Invalid character id: ${characterId}` });
             }
 
             const rowsDeleted = await knex("characters")
@@ -444,7 +440,7 @@ const deleteCharacter = async (req, res) => {
             }
         }
     }catch(error) {
-        res.status(500).send(`Error deleting character: ${error}`);
+        res.status(500).json({ error: `Error deleting character: ${error}` });
     }
 }
 

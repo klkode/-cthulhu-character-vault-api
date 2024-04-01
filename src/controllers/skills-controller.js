@@ -16,7 +16,7 @@ const getAllSkills = async (req, res) => {
         );
         res.status(200).json(data);
     } catch (error) {
-        res.status(500).send(`Error retrieving skills list: ${error}`)
+        res.status(500).json({ error: `Error retrieving skills list: ${error}` });
     }
 }
 

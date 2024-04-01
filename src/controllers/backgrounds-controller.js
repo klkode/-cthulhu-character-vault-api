@@ -34,7 +34,7 @@ const getAllBackgrounds = async (req, res) => {
 
         res.status(200).json(backgroundData);
     } catch (error) {
-        res.status(400).send(`Error retrieving backgrounds list: ${error}`)
+        res.status(500).json({ error: `Error retrieving backgrounds list: ${error}` });
     }
 }
 
